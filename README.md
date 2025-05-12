@@ -40,7 +40,7 @@ Whether you're a data scientist, researcher, or enthusiast, this project empower
 ## Screenshot
 Below is a screenshot of the system in action:
 
-![System Screenshot](./screenshots/system_screenshot.png)
+![System Screenshot](https://github.com/shukur-alom/LLM-Data-Analysis/blob/main/Media/Screenshot%202025-05-12%20214018.png)
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
