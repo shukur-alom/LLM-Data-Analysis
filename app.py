@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from langchain_groq.chat_models import ChatGroq
 import os
+import sqlite3
 from pandasai import SmartDataframe
 from pandasai.exceptions import NoCodeFoundError
 
@@ -50,6 +51,24 @@ def chatbot_fallback(llm, question, columns):
         return llm.invoke(fallback_prompt).content.strip()
     except Exception as e:
         return f"Fallback response error: {e}"
+
+
+def load_data(uploaded_file, file_type, table_name=None):
+    try:
+        if file_type == "csv":
+            return pd.read_csv(uploaded_file)
+        elif file_type == "xlsx":
+            return pd.read_excel(uploaded_file)
+        elif file_type == "db":
+            if not table_name:
+                raise ValueError("Table name required for SQLite database.")
+            conn = sqlite3.connect(uploaded_file)
+            df = pd.read_sql(f"SELECT * FROM {table_name}", conn)
+            conn.close()
+            return df
+    except Exception as e:
+        st.error(f"Error loading file: {e}")
+        return None
     
 def improve_prompt(llm, original_prompt, columns):
     columns_str = ", ".join(columns)
