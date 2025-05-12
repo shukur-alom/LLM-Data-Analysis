@@ -50,7 +50,22 @@ with col2:
     if uploaded_file:
         llm = init_llm()
         if llm:
-            st.success("LLM initialized successfully!")
+            file_extension = uploaded_file.name.split(".")[-1].lower()
+            df = load_data(uploaded_file, file_extension)
+            if df is not None:
+                smart_df = SmartDataframe(df, config={"llm": llm, "enable_cache": False})
+                user_input = st.text_input("Ask me anything about your data (e.g., 'Show average sales by region')", "")
+                if st.button("Analyze"):
+                    if user_input:
+                        with st.spinner("Processing your query..."):
+                            answer = smart_df.chat(user_input)
+                            st.write("**Result:**", answer)
+                    else:
+                        st.warning("Please enter a query to analyze.")
+                else:
+                    st.info("Enter a query to analyze the dataset.")
+            else:
+                st.error("Failed to load dataset.")
         else:
             st.error("Failed to initialize LLM.")
     else:
