@@ -32,6 +32,20 @@ def load_data(uploaded_file, file_type):
         st.error(f"Error loading file: {e}")
         return None
 
+def improve_prompt(llm, original_prompt, columns):
+    columns_str = ", ".join(columns)
+    meta_prompt = f"""
+    You are an expert data analyst using PandasAI to analyze a dataset with columns: {columns_str}.
+    The user's query is: '{original_prompt}'.
+    Rewrite the query to be concise, specific, and optimized for PandasAI (e.g., 'plot a bar chart of sales by region').
+    Return only the rewritten query as a single sentence.
+    """
+    try:
+        return llm.invoke(meta_prompt).content.strip()
+    except Exception as e:
+        st.warning(f"Prompt improvement failed: {e}")
+        return original_prompt
+
 col1, col2 = st.columns([2, 1])
 
 with col1:
