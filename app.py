@@ -1,11 +1,23 @@
 import streamlit as st
 import pandas as pd
+from langchain_groq.chat_models import ChatGroq
+import os
 
 st.set_page_config(page_title="Data Analysis with LLM", layout="wide")
 st.title("Data Analysis with LLM")
 st.markdown("Upload a dataset to analyze or visualize the data.")
 st.sidebar.title("Upload Dataset")
 uploaded_file = st.sidebar.file_uploader("Upload a file", type=["csv", "xlsx"])
+
+def init_llm():
+    try:
+        return ChatGroq(model_name="llama3-70b-8192", api_key=os.environ["GROQ_API_KEY"])
+    except KeyError:
+        st.error("Error: GROQ_API_KEY environment variable not set.")
+        return None
+    except Exception as e:
+        st.error(f"Error initializing LLM: {e}")
+        return None
 
 def load_data(uploaded_file, file_type):
     try:
@@ -35,4 +47,11 @@ with col1:
 with col2:
     st.subheader("Data Analyst")
     st.markdown("Specialized in data analysis and visualization")
-    st.info("Upload a dataset to start analyzing.")
+    if uploaded_file:
+        llm = init_llm()
+        if llm:
+            st.success("LLM initialized successfully!")
+        else:
+            st.error("Failed to initialize LLM.")
+    else:
+        st.info("Upload a dataset to start analyzing.")
