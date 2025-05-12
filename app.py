@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from langchain_groq.chat_models import ChatGroq
 import os
+from pandasai import SmartDataframe
 
 st.set_page_config(page_title="Data Analysis with LLM", layout="wide")
 st.title("Data Analysis with LLM")
@@ -44,6 +45,14 @@ with col1:
     else:
         st.info("No dataset uploaded yet. Upload a file to view the table.")
 
+def is_visualization(answer):
+    if not isinstance(answer, str) and answer is not None:
+        return True
+    if isinstance(answer, str):
+        keywords = ["chart", "plot", "graph", "figure", "visualization"]
+        return any(keyword in answer.lower() for keyword in keywords)
+    return False
+
 with col2:
     st.subheader("Data Analyst")
     st.markdown("Specialized in data analysis and visualization")
@@ -54,12 +63,19 @@ with col2:
             df = load_data(uploaded_file, file_extension)
             if df is not None:
                 smart_df = SmartDataframe(df, config={"llm": llm, "enable_cache": False})
-                user_input = st.text_input("Ask me anything about your data (e.g., 'Show average sales by region')", "")
+                user_input = st.text_input("Ask me anything about your data (e.g., 'Plot sales by region')", "")
                 if st.button("Analyze"):
                     if user_input:
                         with st.spinner("Processing your query..."):
                             answer = smart_df.chat(user_input)
-                            st.write("**Result:**", answer)
+                            if is_visualization(answer):
+                                image_path = 'exports/charts/temp_chart.png'
+                                if os.path.exists(image_path):
+                                    st.image(image_path, caption="Generated Visualization")
+                                else:
+                                    st.warning("Visualization generated but could not be displayed.")
+                            else:
+                                st.write("**Result:**", answer)
                     else:
                         st.warning("Please enter a query to analyze.")
                 else:
