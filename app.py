@@ -121,7 +121,17 @@ with col2:
             file_extension = uploaded_file.name.split(".")[-1].lower()
             df = load_data(uploaded_file, file_extension)
             if df is not None:
-                smart_df = SmartDataframe(df, config={"llm": llm, "enable_cache": False})
+                smart_df = SmartDataframe(df, config={
+                                        "llm": llm,
+                                        "enable_cache": False,
+                                        "verbose": True,
+                                        "enable_plot": False,
+                                        "custom_config": {
+                                            "matplotlib": {
+                                                "figsize": (96, 64)
+                                            }
+                                        }
+                                    })
                 user_input = st.text_input("Ask me anything about your data (e.g., 'Plot sales by region')", "")
                 if st.button("Analyze"):
                     if user_input:
