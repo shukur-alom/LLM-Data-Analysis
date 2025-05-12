@@ -51,7 +51,12 @@ def chatbot_fallback(llm, question, columns):
         return llm.invoke(fallback_prompt).content.strip()
     except Exception as e:
         return f"Fallback response error: {e}"
-
+    
+def is_meaningful_text(answer):
+    if not isinstance(answer, str) or not answer.strip():
+        return False
+    error_indicators = ["unfortunately, i was not able to answer", "no code found", "error"]
+    return not any(indicator in answer.lower() for indicator in error_indicators)
 
 def load_data(uploaded_file, file_type, table_name=None):
     try:
