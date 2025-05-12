@@ -31,6 +31,14 @@ def load_data(uploaded_file, file_type):
     except Exception as e:
         st.error(f"Error loading file: {e}")
         return None
+
+def llm_direct_chat(llm, question):
+    try:
+        prompt = f"You are a helpful assistant. Answer: '{question}' based on general knowledge."
+        return llm.invoke(prompt).content.strip()
+    except Exception as e:
+        return f"Error in direct LLM response: {e}"
+    
 def chatbot_fallback(llm, question, columns):
     columns_str = ", ".join(columns)
     fallback_prompt = f"""
