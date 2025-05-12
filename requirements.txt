@@ -3,3 +3,4 @@ pandas==1.5.3
 langchain-groq==0.3.2
 pandasai==2.2.14
 PyYAML==6.0.2
+numpy==1.26.4
