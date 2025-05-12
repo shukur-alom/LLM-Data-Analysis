@@ -31,7 +31,18 @@ def load_data(uploaded_file, file_type):
     except Exception as e:
         st.error(f"Error loading file: {e}")
         return None
-
+def chatbot_fallback(llm, question, columns):
+    columns_str = ", ".join(columns)
+    fallback_prompt = f"""
+    You are a data analysis assistant with a dataset containing columns: {columns_str}.
+    The query '{question}' failed.
+    Suggest a PandasAI-compatible analysis or visualization using 1-2 relevant columns (e.g., 'plot a bar chart of {columns[0]} by {columns[1]}').
+    """
+    try:
+        return llm.invoke(fallback_prompt).content.strip()
+    except Exception as e:
+        return f"Fallback response error: {e}"
+    
 def improve_prompt(llm, original_prompt, columns):
     columns_str = ", ".join(columns)
     meta_prompt = f"""
