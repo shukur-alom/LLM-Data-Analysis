@@ -19,7 +19,7 @@ Whether you're a data scientist, researcher, or enthusiast, this project empower
 ## Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-repo/LLM-Data-Analysis.git
+    git clone https://github.com/shukur-alom/LLM-Data-Analysis.git
     ```
 2. Navigate to the project directory:
     ```bash
@@ -33,7 +33,7 @@ Whether you're a data scientist, researcher, or enthusiast, this project empower
 ## Usage
 1. Run the main script:
     ```bash
-    python main.py
+    streamlit run app.py
     ```
 2. Follow the on-screen instructions to upload your data and start the analysis.
 
