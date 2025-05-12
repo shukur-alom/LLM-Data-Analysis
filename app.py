@@ -3,6 +3,8 @@ import pandas as pd
 from langchain_groq.chat_models import ChatGroq
 import os
 from pandasai import SmartDataframe
+from pandasai.exceptions import NoCodeFoundError
+
 
 st.set_page_config(page_title="Data Analysis with LLM", layout="wide")
 st.title("Data Analysis with LLM")
@@ -86,3 +88,25 @@ with col2:
             st.error("Failed to initialize LLM.")
     else:
         st.info("Upload a dataset to start analyzing.")
+
+
+# ... (add to analysis block in Data Analyst section)
+if st.button("Analyze"):
+    if user_input:
+        with st.spinner("Processing your query..."):
+            try:
+                answer = smart_df.chat(user_input)
+                if is_visualization(answer):
+                    image_path = 'exports/charts/temp_chart.png'
+                    if os.path.exists(image_path):
+                        st.image(image_path, caption="Generated Visualization")
+                    else:
+                        st.warning("Visualization generated but could not be displayed.")
+                else:
+                    st.write("**Result:**", answer)
+            except NoCodeFoundError as e:
+                st.warning(f"PandasAI error: {e}. Please try a different query.")
+            except Exception as e:
+                st.warning(f"Error: {e}. Please try a different query.")
+    else:
+        st.warning("Please enter a query to analyze.")
